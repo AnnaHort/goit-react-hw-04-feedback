@@ -6,35 +6,42 @@ import Section from './Section';
 import { Notification } from './Notification';
 
 export const App = () => {
+  const [feedbackCounts, setFeedbackCounts] = useState({
+    good: 0,
+    neutral: 0,
+    bad: 0,
+  });
 
-  const [good, setGood] = useState(0);
-  const [neutral, setNeutral] = useState(0);
-  const [bad, setBad] = useState(0);
-
-  const handleClickGood = () => {
-    setGood(prevState => prevState + 1)
-  }
-
-  const handleClickNeutral = () => {
-    setNeutral(prevState => prevState + 1)
-  }
-
-  const handleClickBad = () => {
-    setBad(prevState => prevState + 1)
-  }
-
- const handleLeaveFeedback = option => {
-    if (option === 'good') {
-      handleClickGood();
-    } else if (option === 'neutral') {
-      handleClickNeutral();
-    } else if (option === 'bad') {
-      handleClickBad();
+  const handleLeaveFeedback = option => {
+    switch (option) {
+      case 'good':
+        setFeedbackCounts(prevCounts => ({
+          ...prevCounts,
+          good: prevCounts.good + 1,
+        }));
+        break;
+      case 'neutral':
+        setFeedbackCounts(prevCounts => ({
+          ...prevCounts,
+          neutral: prevCounts.neutral + 1,
+        }));
+        break;
+      case 'bad':
+        setFeedbackCounts(prevCounts => ({
+          ...prevCounts,
+          bad: prevCounts.bad + 1,
+        }));
+        break;
+      default:
+        break;
     }
   };
 
-  const total = good + neutral + bad;
-  const positivePercentage = Math.round(total > 0 ? (good / total) * 100 : 0);
+  const total =
+    feedbackCounts.good + feedbackCounts.neutral + feedbackCounts.bad;
+  const positivePercentage = Math.round(
+    total > 0 ? (feedbackCounts.good / total) * 100 : 0
+  );
   const hasFeedback = total > 0;
 
   return (
@@ -43,18 +50,15 @@ export const App = () => {
         <FeedbackOptions
           options={['good', 'neutral', 'bad']}
           onLeaveFeedback={handleLeaveFeedback}
-          onLeaveFeedbackGood={handleClickGood}
-          onLeaveFeedbackNeutral={handleClickNeutral}
-          onLeaveFeedbackBad={handleClickBad}
         />
       </Section>
 
       <Section title="Statistics">
         {hasFeedback ? (
           <Statistics
-            good={good}
-            neutral={neutral}
-            bad={bad}
+            good={feedbackCounts.good}
+            neutral={feedbackCounts.neutral}
+            bad={feedbackCounts.bad}
             total={total}
             positivePercentage={positivePercentage}
           />
@@ -64,4 +68,4 @@ export const App = () => {
       </Section>
     </Container>
   );
-}
+};
